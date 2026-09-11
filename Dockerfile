@@ -1,11 +1,15 @@
-# 第一阶段：使用 Maven + Java 25 进行打包构建
-FROM maven:3.9.9-eclipse-temurin-25-alpine AS build
+
+FROM eclipse-temurin:25-jdk AS build
 WORKDIR /app
+
+
+RUN apt-get update && apt-get install -y maven
+
 COPY . .
 RUN mvn clean package -DskipTests
 
-# 第二阶段：使用 JRE 25 运行应用
-FROM eclipse-temurin:25-jre-alpine
+
+FROM eclipse-temurin:25-jre
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
